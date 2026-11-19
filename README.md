@@ -7,7 +7,7 @@ La base de datos ya existe. Esta aplicación no crea ni modifica el esquema.
 ## Requisitos
 
 - Node.js 22 o superior
-- PostgreSQL con la base `helpdesk` y las tablas `agentes`, `clientes`, `tickets` y `seguimientos`
+- PostgreSQL/Neon con las tablas `agentes`, `clientes`, `tickets` y `seguimientos`
 
 ## Instalación
 
@@ -18,7 +18,7 @@ cp .env.example .env
 
 Edita `.env`:
 
-- `DATABASE_URL`: conexión a la base `helpdesk`
+- `DATABASE_URL`: conexión PostgreSQL agrupada (pooler) de Neon
 - `SESSION_SECRET`: una cadena de al menos 16 caracteres
 
 ## Uso
@@ -31,16 +31,15 @@ npm run dev
 
 Abre http://127.0.0.1:4321
 
-Producción:
+Verificación del build de producción:
 
 ```bash
 npm run build
-node dist/server/entry.mjs
 ```
 
-El servidor de producción escucha en el puerto `4321`, salvo que definas `PORT` y `HOST`. La cookie de sesión lleva `secure` en ese build, así que hace falta HTTPS para que el navegador la guarde. La demo local usa `npm run dev`.
+El proyecto utiliza `@astrojs/vercel`: frontend SSR y endpoints API se despliegan juntos como una aplicación monolítica en Vercel.
 
-## Acceso de demostración
+## Acceso inicial
 
 Si la tabla `agentes` está vacía, el primer arranque crea un agente:
 
@@ -52,7 +51,7 @@ Si la tabla `agentes` está vacía, el primer arranque crea un agente:
 
 El usuario se guarda en el campo `email`. No es un correo.
 
-## Guion de la demo
+## Validación funcional
 
 1. Entra a `/tickets` sin sesión: redirige a `/login`.
 2. Entra con `admin` / `123`. Un dato incorrecto muestra «Usuario o contraseña incorrectos».
@@ -65,6 +64,18 @@ El usuario se guarda en el campo `email`. No es un correo.
 
 La eliminación está disponible en la «Zona de peligro» del detalle. Antes de ejecutarla, la interfaz pide confirmación. Se eliminan el ticket y sus seguimientos; el cliente se conserva.
 
+## Despliegue en Vercel
+
+1. Sube el repositorio a GitHub e impórtalo desde Vercel.
+2. Vercel detectará Astro. No cambies el comando de build (`npm run build`).
+3. En **Settings → Environment Variables**, configura:
+   - `DATABASE_URL`: la URL pooler de Neon, con `sslmode=require`.
+   - `SESSION_SECRET`: una clave larga y aleatoria distinta de la usada localmente.
+4. Asigna ambas variables a Production, Preview y Development.
+5. Despliega. La cookie de sesión usa `secure` automáticamente en producción.
+
+No agregues `.env` al repositorio; está excluido por `.gitignore`.
+
 ## Decisiones
 
 Donde el enunciado dejaba margen, se eligió la opción más simple:
@@ -76,5 +87,5 @@ Donde el enunciado dejaba margen, se eligió la opción más simple:
 - La nota vacía se guarda como `NULL`.
 - Los errores de formulario viajan en una cookie temporal para volver a mostrar lo escrito.
 - Las fechas se muestran en `America/Bogota`.
-- La sesión dura 12 horas. La semilla del administrador corre la primera vez que el proceso atiende una página, para que funcione igual en desarrollo y con `node dist/server/entry.mjs`.
+- La sesión dura 12 horas. La semilla del administrador corre la primera vez que el proceso atiende una página y funciona en las funciones serverless de Vercel.
 - Todos los campos se recortan, incluida la contraseña.

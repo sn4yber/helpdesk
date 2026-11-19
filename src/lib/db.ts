@@ -36,7 +36,9 @@ export const pool =
   globalForPg.__helpdeskPool ??
   new Pool({
     connectionString,
-    max: 10,
+    max: 5,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 10_000,
     application_name: 'helpdesk',
   });
 

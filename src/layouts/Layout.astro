@@ -1,0 +1,127 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  ancho?: 'md' | '6xl';
+}
+
+const { title, ancho = '6xl' } = Astro.props;
+const agente = Astro.locals.agente;
+const path = Astro.url.pathname;
+const contenedor = ancho === 'md' ? 'max-w-md' : 'max-w-7xl';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} · Help Desk</title>
+  </head>
+  <body class="min-h-screen text-slate-900 antialiased">
+    {
+      agente ? (
+        <div class="min-h-screen lg:grid lg:grid-cols-[244px_1fr]">
+          <aside class="hidden border-r border-slate-200 bg-white lg:fixed lg:inset-y-0 lg:flex lg:w-[244px] lg:flex-col">
+            <a href="/tickets" class="flex h-20 items-center gap-3 border-b border-slate-100 px-6">
+              <span class="grid size-10 place-items-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 13a8 8 0 0 1 16 0" />
+                  <path d="M18 19h-1a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h3v5a3 3 0 0 1-3 3Z" />
+                  <path d="M6 19h1a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2H4v5a3 3 0 0 0 3 3Z" />
+                  <path d="M18 19c0 1.1-.9 2-2 2h-3" />
+                </svg>
+              </span>
+              <span>
+                <strong class="block text-lg leading-none tracking-tight">Helpdesk</strong>
+                <small class="mt-1 block text-[10px] font-semibold uppercase tracking-[.18em] text-slate-400">Centro de soporte</small>
+              </span>
+            </a>
+
+            <nav class="flex-1 space-y-1 p-4" aria-label="Navegación principal">
+              <p class="px-3 pb-2 pt-3 text-[10px] font-bold uppercase tracking-[.16em] text-slate-400">Gestión</p>
+              <a
+                href="/tickets"
+                class:list={[
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold',
+                  path !== '/tickets/nuevo' && (path === '/tickets' || path.startsWith('/tickets/'))
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                ]}
+              >
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5V9a2 2 0 0 0 0 4v3.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 16.5V13a2 2 0 0 0 0-4Z" />
+                  <path d="M9 8h6M9 12h6M9 16h4" />
+                </svg>
+                Tickets
+              </a>
+              <a
+                href="/tickets/nuevo"
+                class:list={[
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold',
+                  path === '/tickets/nuevo'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/20'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                ]}
+              >
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Nuevo ticket
+              </a>
+            </nav>
+
+            <div class="border-t border-slate-100 p-4">
+              <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+                <span class="grid size-9 shrink-0 place-items-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                  {agente.nombre.charAt(0).toUpperCase()}
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-slate-800">{agente.nombre}</p>
+                  <p class="truncate text-xs text-slate-500">Agente activo</p>
+                </div>
+                <form method="post" action="/api/logout">
+                  <button type="submit" title="Cerrar sesión" class="rounded-lg p-2 text-slate-400 hover:bg-white hover:text-red-600">
+                    <span class="sr-only">Cerrar sesión</span>
+                    <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                      <path d="M10 17l5-5-5-5M15 12H3" />
+                      <path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5" />
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </aside>
+
+          <div class="lg:col-start-2">
+            <header class="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur lg:hidden">
+              <div class="flex h-16 items-center justify-between px-4">
+                <a href="/tickets" class="flex items-center gap-2 font-bold">
+                  <span class="grid size-8 place-items-center rounded-lg bg-blue-600 text-white">H</span>
+                  Helpdesk
+                </a>
+                <div class="flex items-center gap-2">
+                  <a href="/tickets/nuevo" class="grid size-9 place-items-center rounded-lg bg-blue-600 text-xl text-white" aria-label="Nuevo ticket">+</a>
+                  <form method="post" action="/api/logout">
+                    <button type="submit" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600">Salir</button>
+                  </form>
+                </div>
+              </div>
+            </header>
+            <main class:list={['mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 lg:py-8', contenedor]}>
+              <slot />
+            </main>
+          </div>
+        </div>
+      ) : (
+        <main class="min-h-screen">
+          <slot />
+        </main>
+      )
+    }
+  </body>
+</html>

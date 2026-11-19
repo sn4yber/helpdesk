@@ -1,0 +1,23 @@
+---
+interface Props {
+  mensaje?: string;
+}
+
+const { mensaje } = Astro.props;
+---
+
+{
+  mensaje && (
+    <div
+      role="status"
+      class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+    >
+      <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-emerald-600 text-white">
+        <svg viewBox="0 0 20 20" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="m5 10 3 3 7-7" />
+        </svg>
+      </span>
+      <span class="font-medium">{mensaje}</span>
+    </div>
+  )
+}
